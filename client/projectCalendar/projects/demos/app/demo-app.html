@@ -1,0 +1,43 @@
+<nav
+  class="navbar navbar-expand-lg navbar-light bg-light fixed-top"
+  [class.navbar-dark]="activeDemo?.darkTheme"
+  [class.bg-dark]="activeDemo?.darkTheme"
+  role="navigation"
+>
+  <a class="navbar-brand" href="#">Angular 6.0+ calendar</a>
+
+</nav>
+
+<div class="container-fluid">
+  <div class="row fill-height">
+    <div
+      class="col-md-9 col-xl-10 fill-height scroll-y"
+      mwlDraggableScrollContainer
+    >
+        <div class="card-body">
+          <ngb-tabset [destroyOnHide]="false">
+            <ngb-tab>
+              <ng-template ngbTabTitle>
+                <i class="fas fa-fw fa-laptop"></i> Live demo
+              </ng-template>
+              <ng-template ngbTabContent>
+                <div class="spacer-top"><router-outlet></router-outlet></div>
+              </ng-template>
+            </ngb-tab>
+
+            <ngb-tab >
+               <ng-template ngbTabTitle>
+                <i class="fas fa-fw fa-laptop"></i> Scheduler People
+              </ng-template>
+              <ng-template ngbTabContent>
+                <div class="spacer-top">test</div>
+              </ng-template>
+              
+            </ngb-tab>
+          </ngb-tabset>
+        </div>
+      
+    </div>
+
+  </div>
+</div>
