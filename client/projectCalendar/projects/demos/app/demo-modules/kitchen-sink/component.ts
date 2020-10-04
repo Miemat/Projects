@@ -16,6 +16,7 @@ import {
 } from 'date-fns';
 import { Subject } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClient } from '@angular/common/http';
 import {
   CalendarEvent,
   CalendarEventAction,
@@ -121,7 +122,8 @@ export class DemoComponent {
 
   activeDayIsOpen: boolean = true;
 
-  constructor(private modal: NgbModal) {}
+  // constructor(private modal: NgbModal) {}
+  constructor(private http: HttpClient, private modal: NgbModal) {}
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -179,6 +181,22 @@ export class DemoComponent {
 
   deleteEvent(eventToDelete: CalendarEvent) {
     this.events = this.events.filter((event) => event !== eventToDelete);
+  }
+
+  saveEvent(eventToSave: CalendarEvent){
+    console.log("saveEvent Test");
+    this.http
+    .put<{ holidays: CalendarEvent[] }>('localhost:8008/saveEvent', {
+      params: {
+        title: eventToSave.title,
+        start: eventToSave.start,
+        end: eventToSave.end,
+        allDay: eventToSave.allDay,
+        color: eventToSave.color,
+        id: eventToSave.id
+      },
+    });
+    console.log("saveEvent Test2");
   }
 
   setView(view: CalendarView) {
