@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class SchedulerService {
+class SchedulerService {
 
     @Scheduled(fixedRate = 2000)
     public void reportCurrentTime() {
