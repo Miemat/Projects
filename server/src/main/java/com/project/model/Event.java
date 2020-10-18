@@ -1,8 +1,8 @@
-package com.project.service;
+package com.project.model;
 
 import java.util.Date;
 
-public class Holiday {
+public class Event {
 
     private String title;
     private String start;
@@ -12,7 +12,7 @@ public class Holiday {
     private String colorSeconder;
     private String id;
 
-    public Holiday(String title, String start, String end, boolean allDay, String colorPrime, String colorSeconder, String id) {
+    public Event(String title, String start, String end, boolean allDay, String colorPrime, String colorSeconder, String id) {
         this.title = title;
         this.start = start;
         this.end = end;
