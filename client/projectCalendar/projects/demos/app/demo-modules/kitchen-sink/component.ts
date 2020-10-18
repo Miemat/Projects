@@ -4,6 +4,10 @@ import {
   ViewChild,
   TemplateRef,
 } from '@angular/core';
+import {HttpParams} from "@angular/common/http";
+import {HttpHeaders} from "@angular/common/http";
+import { Observable, throwError } from 'rxjs';
+import { catchError, retry } from 'rxjs/operators';
 import {
   startOfDay,
   endOfDay,
@@ -184,19 +188,25 @@ export class DemoComponent {
   }
 
   saveEvent(eventToSave: CalendarEvent){
-    console.log("saveEvent Test");
+
+    const params = new HttpParams()
+      .set('title', eventToSave.title)
+      .set('start', ""+eventToSave.start)
+      .set('end', ""+eventToSave.end)
+      .set('allDay', ""+eventToSave.allDay)
+      .set('colorPrimary', eventToSave.color.primary)
+      .set('colorSecondary', eventToSave.color.secondary)
+      .set('id', ""+eventToSave.id);
+
+    const headers = new HttpHeaders()
+      .append('Content-Type', 'application/json')
+      .append('Access-Control-Allow-Headers', 'Content-Type')
+      .append('Access-Control-Allow-Methods', 'GET')
+      .append('Access-Control-Allow-Origin', '*');
+      
     this.http
-    .put<{ holidays: CalendarEvent[] }>('localhost:8008/saveEvent', {
-      params: {
-        title: eventToSave.title,
-        start: eventToSave.start,
-        end: eventToSave.end,
-        allDay: eventToSave.allDay,
-        color: eventToSave.color,
-        id: eventToSave.id
-      },
-    });
-    console.log("saveEvent Test2");
+      .get('http://localhost:8080/saveEvent', {headers, params }).subscribe();
+
   }
 
   setView(view: CalendarView) {
