@@ -21,23 +21,14 @@ public class ResourceController {
         return "Done";
     }
 
-    @RequestMapping("/test")
-    @ResponseBody
-    public String test(@RequestParam String title) {
-        log.info("It's work test "+title);
-        log.info("dfsds");
-//        return new Holiday("Travel", "7:00", "22:00", true, "black", String.valueOf(counter.incrementAndGet()));
-        return "test";
-    }
-
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    @GetMapping("/test2")
+//    @DeleteMapping("/deleteEvent")
+    @RequestMapping("/deleteEvent")
     @ResponseBody
-    public void test2(@RequestParam String title) {
-        log.info("It's work test ");
-        log.info("dfsds");
-//        return new Holiday("Travel", "7:00", "22:00", true, "black", String.valueOf(counter.incrementAndGet()));
-//        return "test";
+    public String deleteEvent(@RequestParam String id) {
+
+        log.info("Delete Event Id: "+ id);
+        return "Done";
     }
 
 }
