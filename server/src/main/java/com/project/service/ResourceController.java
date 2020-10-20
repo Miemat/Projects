@@ -12,7 +12,7 @@ public class ResourceController {
     //@PutMapping("/")
     @RequestMapping("/test")
     @ResponseBody
-    public Holiday evPojo(@RequestParam String title) {
+    public Holiday evPojo(@RequestParam String title, String startTime, String endTime, boolean allDay, String color) {
         log.info("It's work "+title);
         return new Holiday("Travel", "7:00", "22:00", true, "black", String.valueOf(counter.incrementAndGet()));
     }

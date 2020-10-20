@@ -1,5 +1,8 @@
 package com.project.service;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Date;
 
 public class Holiday {
@@ -9,6 +12,7 @@ public class Holiday {
     private String end;
     private boolean allDay;
     private String color;
+    @Id
     private String id;
 
     public Holiday(String title, String start, String end, boolean allDay, String color, String id) {
@@ -42,5 +46,17 @@ public class Holiday {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Holiday{" +
+                "title='" + title + '\'' +
+                ", start='" + start + '\'' +
+                ", end='" + end + '\'' +
+                ", allDay=" + allDay +
+                ", color='" + color + '\'' +
+                ", id='" + id + '\'' +
+                '}';
     }
 }
