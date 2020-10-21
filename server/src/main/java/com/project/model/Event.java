@@ -1,9 +1,11 @@
 package com.project.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
+@Document(collection = "Event")
 public class Event {
 
     private String title;
@@ -23,6 +25,15 @@ public class Event {
         this.colorPrime = colorPrime;
         this.colorSeconder = colorSeconder;
         this.id = id;
+    }
+
+    public Event(String title, String start, String end, boolean allDay, String colorPrime, String colorSeconder) {
+        this.title = title;
+        this.start = start;
+        this.end = end;
+        this.allDay = allDay;
+        this.colorPrime = colorPrime;
+        this.colorSeconder = colorSeconder;
     }
 
     public String getTitle() {

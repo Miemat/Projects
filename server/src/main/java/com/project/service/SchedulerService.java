@@ -16,7 +16,7 @@ class SchedulerService {
     @Autowired
     private EventRepository repository;
 
-    @Scheduled(fixedRate = 4000)
+//    @Scheduled(fixedRate = 4000)
     public void reportCurrentTime() {
         repository.save(new Event("Work", "7", "17", true, "Black", "Red", "1"));
         System.out.println(repository.findByTitle("Work"));
