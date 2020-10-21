@@ -127,7 +127,9 @@ export class DemoComponent {
   activeDayIsOpen: boolean = true;
 
   // constructor(private modal: NgbModal) {}
-  constructor(private http: HttpClient, private modal: NgbModal) {}
+  constructor(private http: HttpClient, private modal: NgbModal) {
+    console.log("Start constructor and load events....");
+  }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
