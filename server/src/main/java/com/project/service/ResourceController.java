@@ -31,4 +31,14 @@ public class ResourceController {
         return "Done";
     }
 
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @RequestMapping("/getAllEvents")
+    @ResponseBody
+    public String getAllEvents() {
+
+        log.info("it's work");
+
+        return "Done";
+    }
+
 }

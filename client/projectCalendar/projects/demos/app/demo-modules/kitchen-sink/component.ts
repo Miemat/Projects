@@ -128,6 +128,16 @@ export class DemoComponent {
 
   // constructor(private modal: NgbModal) {}
   constructor(private http: HttpClient, private modal: NgbModal) {
+
+  const headers = new HttpHeaders()
+    .append('Content-Type', 'application/json')
+    .append('Access-Control-Allow-Headers', 'Content-Type')
+    .append('Access-Control-Allow-Methods', 'GET')
+    .append('Access-Control-Allow-Origin', '*');
+    
+  this.http
+    .get('http://localhost:8080/deleteEvent', {headers, params }).subscribe();
+
     console.log("Start constructor and load events....");
   }
 
@@ -187,18 +197,16 @@ export class DemoComponent {
 
   deleteEvent(eventToDelete: CalendarEvent) {
     this.events = this.events.filter((event) => event !== eventToDelete);
-
-    const params = new HttpParams()
-    .set('id', ""+eventToDelete.id);
-
-  const headers = new HttpHeaders()
-    .append('Content-Type', 'application/json')
-    .append('Access-Control-Allow-Headers', 'Content-Type')
-    .append('Access-Control-Allow-Methods', 'GET')
-    .append('Access-Control-Allow-Origin', '*');
     
-  this.http
-    .get('http://localhost:8080/deleteEvent', {headers, params }).subscribe();
+    const headers = new HttpHeaders()
+      .append('Content-Type', 'application/json')
+      .append('Access-Control-Allow-Headers', 'Content-Type')
+      .append('Access-Control-Allow-Methods', 'GET')
+      .append('Access-Control-Allow-Origin', '*');
+      
+    this.http
+      .get('http://localhost:8080/allEvents', {headers}).subscribe(); 
+
   }
 
   saveEvent(eventToSave: CalendarEvent){
