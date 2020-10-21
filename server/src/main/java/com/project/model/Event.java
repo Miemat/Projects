@@ -1,5 +1,7 @@
 package com.project.model;
 
+import org.springframework.data.annotation.Id;
+
 import java.util.Date;
 
 public class Event {
@@ -10,6 +12,7 @@ public class Event {
     private boolean allDay;
     private String colorPrime;
     private String colorSeconder;
+    @Id
     private String id;
 
     public Event(String title, String start, String end, boolean allDay, String colorPrime, String colorSeconder, String id) {
