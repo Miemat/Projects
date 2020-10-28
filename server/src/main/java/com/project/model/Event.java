@@ -8,14 +8,17 @@ import java.util.Date;
 @Document(collection = "Event")
 public class Event {
 
+    @Id
+    private String id;
     private String title;
     private String start;
     private String end;
     private boolean allDay;
     private String colorPrime;
     private String colorSeconder;
-    @Id
-    private String id;
+
+    public Event() {
+    }
 
     public Event(String title, String start, String end, boolean allDay, String colorPrime, String colorSeconder, String id) {
         this.title = title;

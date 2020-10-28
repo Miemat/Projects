@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 public class ResourceController {
@@ -34,9 +36,10 @@ public class ResourceController {
                          @RequestParam Boolean allDay, @RequestParam String colorPrimary, @RequestParam String colorSecondary,
                          @RequestParam String id) {
 
-        Event event = new Event(title, start, end, allDay, colorPrimary, colorSecondary, id);
+        Event event = new Event(title, start, end, allDay, colorPrimary, colorSecondary);
+        Event a = repository.save(event);
         log.info("Data Event: "+ event.toString());
-        return "Done";
+        return "Done tTest with Id: "+a.getId();
     }
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -44,7 +47,7 @@ public class ResourceController {
     @RequestMapping("/deleteEvent")
     @ResponseBody
     public String deleteEvent(@RequestParam String id) {
-
+        repository.deleteById(id);
         log.info("Delete Event Id: "+ id);
         return "Done";
     }
@@ -53,11 +56,21 @@ public class ResourceController {
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @RequestMapping("/getAllEvents")
     @ResponseBody
-    public String getAllEvents() {
+    public List<Event> getAllEvents() {
+        log.info("get all");
+        List<Event> events = repository.findAll();
+        try {
+            for (Event event: events) {
+                log.info(event.toString());
 
-        log.info("it's work");
-
-        return "Done";
+            }
+        }catch(Exception e){
+            log.error(e.getMessage(), e);
+        }
+        log.info("test: "+ events.get(0).toString());
+        String b = events.get(0).toString();
+        return events;
     }
+
 
 }
