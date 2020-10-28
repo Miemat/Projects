@@ -27,6 +27,9 @@ import {
   CalendarEventTimesChangedEvent,
   CalendarView,
 } from 'angular-calendar';
+import { CalendarEventActionResponse } from './calendar-event-action-response';
+import { CalendarEventActionsComponent } from 'projects/angular-calendar/src/modules/common/calendar-event-actions.component';
+
 
 const colors: any = {
   red: {
@@ -83,51 +86,52 @@ export class DemoComponent {
 
   refresh: Subject<any> = new Subject();
 
-  events: CalendarEvent[] = [
-    {
-      start: subDays(startOfDay(new Date()), 1),
-      end: addDays(new Date(), 1),
-      title: 'A 3 day event',
-      color: colors.red,
-      actions: this.actions,
-      allDay: true,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-    {
-      start: startOfDay(new Date()),
-      title: 'An event with no end date',
-      color: colors.yellow,
-      actions: this.actions,
-    },
-    {
-      start: subDays(endOfMonth(new Date()), 3),
-      end: addDays(endOfMonth(new Date()), 3),
-      title: 'A long event that spans 2 months',
-      color: colors.blue,
-      allDay: true,
-    },
-    {
-      start: addHours(startOfDay(new Date()), 2),
-      end: addHours(new Date(), 2),
-      title: 'A draggable and resizable event',
-      color: colors.yellow,
-      actions: this.actions,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-  ];
+  events: CalendarEvent[] = [];
+  //   {
+  //     start: subDays(startOfDay(new Date()), 1),
+  //     end: addDays(new Date(), 1),
+  //     title: 'A 3 day event',
+  //     color: colors.red,
+  //     actions: this.actions,
+  //     allDay: true,
+  //     resizable: {
+  //       beforeStart: true,
+  //       afterEnd: true,
+  //     },
+  //     draggable: true,
+  //   },
+  //   {
+  //     start: startOfDay(new Date()),
+  //     title: 'An event with no end date',
+  //     color: colors.yellow,
+  //     actions: this.actions,
+  //   },
+  //   {
+  //     start: subDays(endOfMonth(new Date()), 3),
+  //     end: addDays(endOfMonth(new Date()), 3),
+  //     title: 'A long event that spans 2 months',
+  //     color: colors.blue,
+  //     allDay: true,
+  //   },
+  //   {
+  //     start: addHours(startOfDay(new Date()), 2),
+  //     end: addHours(new Date(), 2),
+  //     title: 'A draggable and resizable event',
+  //     color: colors.yellow,
+  //     actions: this.actions,
+  //     resizable: {
+  //       beforeStart: true,
+  //       afterEnd: true,
+  //     },
+  //     draggable: true,
+  //   },
+  // ];
 
   activeDayIsOpen: boolean = true;
 
-  // constructor(private modal: NgbModal) {}
   constructor(private http: HttpClient, private modal: NgbModal) {
+
+    const params = new HttpParams();
 
   const headers = new HttpHeaders()
     .append('Content-Type', 'application/json')
@@ -135,8 +139,26 @@ export class DemoComponent {
     .append('Access-Control-Allow-Methods', 'GET')
     .append('Access-Control-Allow-Origin', '*');
     
-  this.http
-    .get('http://localhost:8080/deleteEvent', {headers, params }).subscribe();
+    this.http
+    .get('http://localhost:8081/getAllEvents', {headers, params})
+    .subscribe((data: CalendarEventActionResponse[]) => {
+
+      data.forEach(childObj=> {
+
+        console.log("child start: "+ childObj.start);
+        console.log("child end: "+ childObj.end);
+
+        var event: CalendarEvent = {id: childObj.id, title: childObj.title, color: colors.blue, allDay: childObj.allDay, start: startOfDay(new Date()), end: startOfDay(new Date())};
+
+        this.events.push(event);
+      // this.addEventWithParams(childObj.title, childObj.start, childObj.end, "test");
+
+        // console.log("bbbbbbbbbbbbb: "+childObj.title);
+
+     });
+  });
+
+
 
     console.log("Start constructor and load events....");
   }
@@ -195,9 +217,29 @@ export class DemoComponent {
     ];
   }
 
+  addEventWithParams(_title: string, _start: string, _end:string, _color:string, ): void {
+    this.events = [
+      ...this.events,
+      {
+        title: _title,
+        start: startOfDay(new Date()),
+        end: endOfDay(new Date()),
+        color: colors.red,
+        draggable: true,
+        resizable: {
+          beforeStart: true,
+          afterEnd: true,
+        },
+      },
+    ];
+  }
+
   deleteEvent(eventToDelete: CalendarEvent) {
     this.events = this.events.filter((event) => event !== eventToDelete);
     
+    const params = new HttpParams()
+    .set('id', ""+eventToDelete.id);
+
     const headers = new HttpHeaders()
       .append('Content-Type', 'application/json')
       .append('Access-Control-Allow-Headers', 'Content-Type')
@@ -205,7 +247,7 @@ export class DemoComponent {
       .append('Access-Control-Allow-Origin', '*');
       
     this.http
-      .get('http://localhost:8080/allEvents', {headers}).subscribe(); 
+      .get('http://localhost:8081/allEvents', {headers, responseType: 'text', params}).subscribe(); 
 
   }
 
@@ -227,7 +269,9 @@ export class DemoComponent {
       .append('Access-Control-Allow-Origin', '*');
       
     this.http
-      .get('http://localhost:8080/saveEvent', {headers, params }).subscribe();
+      .get('http://localhost:8081/saveEvent', {headers, responseType: 'text', params }).subscribe(res => console.log(res));
+
+      console.log("Saved Event on DB")
 
   }
 
