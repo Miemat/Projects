@@ -111,7 +111,7 @@
         <th>Secondary color</th>
         <th>Starts at</th>
         <th>Ends at</th>
-        <th>Remove</th>
+        <th>Action</th>
       </tr>
     </thead>
 
@@ -172,6 +172,9 @@
         <td>
           <button class="btn btn-danger" (click)="deleteEvent(event)">
             Delete
+          </button>
+          <button class="btn btn-primary" style="background-color: #38c41f; border-color: #38c41f;" (click)="saveEvent(event)">
+            Save
           </button>
         </td>
       </tr>

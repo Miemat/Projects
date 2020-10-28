@@ -4,6 +4,10 @@ import {
   ViewChild,
   TemplateRef,
 } from '@angular/core';
+import {HttpParams} from "@angular/common/http";
+import {HttpHeaders} from "@angular/common/http";
+import { Observable, throwError } from 'rxjs';
+import { catchError, retry } from 'rxjs/operators';
 import {
   startOfDay,
   endOfDay,
@@ -16,6 +20,7 @@ import {
 } from 'date-fns';
 import { Subject } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClient } from '@angular/common/http';
 import {
   CalendarEvent,
   CalendarEventAction,
@@ -121,7 +126,20 @@ export class DemoComponent {
 
   activeDayIsOpen: boolean = true;
 
-  constructor(private modal: NgbModal) {}
+  // constructor(private modal: NgbModal) {}
+  constructor(private http: HttpClient, private modal: NgbModal) {
+
+  const headers = new HttpHeaders()
+    .append('Content-Type', 'application/json')
+    .append('Access-Control-Allow-Headers', 'Content-Type')
+    .append('Access-Control-Allow-Methods', 'GET')
+    .append('Access-Control-Allow-Origin', '*');
+    
+  this.http
+    .get('http://localhost:8080/deleteEvent', {headers, params }).subscribe();
+
+    console.log("Start constructor and load events....");
+  }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -179,6 +197,38 @@ export class DemoComponent {
 
   deleteEvent(eventToDelete: CalendarEvent) {
     this.events = this.events.filter((event) => event !== eventToDelete);
+    
+    const headers = new HttpHeaders()
+      .append('Content-Type', 'application/json')
+      .append('Access-Control-Allow-Headers', 'Content-Type')
+      .append('Access-Control-Allow-Methods', 'GET')
+      .append('Access-Control-Allow-Origin', '*');
+      
+    this.http
+      .get('http://localhost:8080/allEvents', {headers}).subscribe(); 
+
+  }
+
+  saveEvent(eventToSave: CalendarEvent){
+
+    const params = new HttpParams()
+      .set('title', eventToSave.title)
+      .set('start', ""+eventToSave.start)
+      .set('end', ""+eventToSave.end)
+      .set('allDay', ""+eventToSave.allDay)
+      .set('colorPrimary', eventToSave.color.primary)
+      .set('colorSecondary', eventToSave.color.secondary)
+      .set('id', ""+eventToSave.id);
+
+    const headers = new HttpHeaders()
+      .append('Content-Type', 'application/json')
+      .append('Access-Control-Allow-Headers', 'Content-Type')
+      .append('Access-Control-Allow-Methods', 'GET')
+      .append('Access-Control-Allow-Origin', '*');
+      
+    this.http
+      .get('http://localhost:8080/saveEvent', {headers, params }).subscribe();
+
   }
 
   setView(view: CalendarView) {
