@@ -5,7 +5,7 @@ export interface CalendarEventActionResponse {
     end? :string;
     allDay? : boolean;
     colorPrime? : string;
-    colorSeconnder? : string;
+    colorSeconder? : string;
 
     // constructor(){}
 
