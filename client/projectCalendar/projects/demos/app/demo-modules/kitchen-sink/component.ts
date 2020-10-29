@@ -29,6 +29,7 @@ import {
 } from 'angular-calendar';
 import { CalendarEventActionResponse } from './calendar-event-action-response';
 import { CalendarEventActionsComponent } from 'projects/angular-calendar/src/modules/common/calendar-event-actions.component';
+import { DatePipe } from '@angular/common';
 
 
 const colors: any = {
@@ -129,7 +130,7 @@ export class DemoComponent {
 
   activeDayIsOpen: boolean = true;
 
-  constructor(private http: HttpClient, private modal: NgbModal) {
+  constructor(private http: HttpClient, private modal: NgbModal, public datepipe: DatePipe) {
 
     const params = new HttpParams();
 
@@ -148,7 +149,7 @@ export class DemoComponent {
         console.log("child start: "+ childObj.start);
         console.log("child end: "+ childObj.end);
 
-        var event: CalendarEvent = {id: childObj.id, title: childObj.title, color: colors.blue, allDay: childObj.allDay, start: startOfDay(new Date()), end: startOfDay(new Date())};
+        var event: CalendarEvent = {id: childObj.id, title: childObj.title, color: colors.blue, allDay: childObj.allDay, start: new Date(childObj.start), end: new Date(childObj.end)};
 
         this.events.push(event);
       // this.addEventWithParams(childObj.title, childObj.start, childObj.end, "test");
@@ -253,14 +254,22 @@ export class DemoComponent {
 
   saveEvent(eventToSave: CalendarEvent){
 
+    console.log("date start: "+this.datepipe.transform(eventToSave.start, 'yyyy-MM-ddThh:mm:ss'));
+    console.log("date end: "+this.datepipe.transform(eventToSave.end, 'yyyy-MM-ddThh:mm:ss'));
+
     const params = new HttpParams()
       .set('title', eventToSave.title)
-      .set('start', ""+eventToSave.start)
-      .set('end', ""+eventToSave.end)
-      .set('allDay', ""+eventToSave.allDay)
+      
+      .set('start', ""+this.datepipe.transform(eventToSave.start, 'yyyy-MM-ddThh:mm:ss'))
+      .set('end', ""+this.datepipe.transform(eventToSave.end, 'yyyy-MM-ddThh:mm:ss'))
+
+      // 1968-11-16T00:00:00
+
+      .set('allDay', ''+eventToSave.allDay)
       .set('colorPrimary', eventToSave.color.primary)
       .set('colorSecondary', eventToSave.color.secondary)
       .set('id', ""+eventToSave.id);
+
 
     const headers = new HttpHeaders()
       .append('Content-Type', 'application/json')

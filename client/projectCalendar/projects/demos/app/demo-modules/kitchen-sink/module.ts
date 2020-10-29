@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FlatpickrModule } from 'angularx-flatpickr';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
@@ -21,6 +21,7 @@ import { RouterModule } from '@angular/router';
       useFactory: adapterFactory,
     }),
   ],
+  providers: [DatePipe],
   declarations: [DemoComponent],
   exports: [DemoComponent],
 })
