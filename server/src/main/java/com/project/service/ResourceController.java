@@ -67,8 +67,9 @@ public class ResourceController {
         return events;
     }
 
-    @CrossOrigin(origins = "*", allowCredentials = "*")
-    @RequestMapping(name = "/getAllEventsByDate", method = RequestMethod.GET)
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @RequestMapping("/getAllEventsByDate")
+//    @RequestMapping(name = "/getAllEventsByDate", method = RequestMethod.GET)
     @ResponseBody
     public List<Event> getAllEventsByDate(String startDate, String endDate){
 
