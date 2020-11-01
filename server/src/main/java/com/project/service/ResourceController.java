@@ -4,6 +4,9 @@ import com.project.model.Event;
 import com.project.repository.EventRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +17,7 @@ public class ResourceController {
 
     @Autowired
     private EventRepository repository;
+    private MongoOperations mongoOperations;
 
     @RequestMapping("/test")
     @ResponseBody
@@ -59,14 +63,18 @@ public class ResourceController {
     public List<Event> getAllEvents() {
         log.info("get all");
         List<Event> events = repository.findAll();
-        try {
-            events.forEach(data -> {
-                log.info(data.toString());
-            });
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
         return events;
+    }
+
+    @CrossOrigin(origins = "*", allowCredentials = "*")
+    @RequestMapping(name = "/getAllEventsByDate", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Event> getAllEventsByDate(String startDate, String endDate){
+
+        Query query = new Query();
+        query.addCriteria(Criteria.where("start").gte(startDate).and("start").lt(endDate));
+
+        return mongoOperations.find(query, Event.class);
     }
 
 
