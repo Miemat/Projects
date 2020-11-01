@@ -3,10 +3,12 @@ import {
   ChangeDetectionStrategy,
   ViewChild,
   TemplateRef,
+  OnInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import {HttpParams} from "@angular/common/http";
 import {HttpHeaders} from "@angular/common/http";
-import { Observable, throwError } from 'rxjs';
+import { Observable, Subscription, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import {
   startOfDay,
@@ -53,7 +55,7 @@ const colors: any = {
   styleUrls: ['styles.css'],
   templateUrl: 'template.html',
 })
-export class DemoComponent {
+export class DemoComponent implements OnInit {
   @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
@@ -130,38 +132,44 @@ export class DemoComponent {
 
   activeDayIsOpen: boolean = true;
 
-  constructor(private http: HttpClient, private modal: NgbModal, public datepipe: DatePipe) {
+  constructor(private http: HttpClient, private modal: NgbModal, public datepipe: DatePipe, private cdr: ChangeDetectorRef) { }
 
+  ngOnInit(): void {
+    this.fetchEvents();
+  
+    console.log("AppComponent: OnInit()");
+  }
+
+  private fetchEvents() {
     const params = new HttpParams();
 
-  const headers = new HttpHeaders()
-    .append('Content-Type', 'application/json')
-    .append('Access-Control-Allow-Headers', 'Content-Type')
-    .append('Access-Control-Allow-Methods', 'GET')
-    .append('Access-Control-Allow-Origin', '*');
+    const headers = new HttpHeaders()
+      .append('Content-Type', 'application/json')
+      .append('Access-Control-Allow-Headers', 'Content-Type')
+      .append('Access-Control-Allow-Methods', 'GET')
+      .append('Access-Control-Allow-Origin', '*');
+  
+      this.http
+      .get('http://localhost:8081/getAllEvents', {headers, params})
+      .subscribe((data: CalendarEventActionResponse[]) => {
+        this.events = data.map((event) => {
+          console.log("tes: "+event.title);
 
-    this.http
-    .get('http://localhost:8081/getAllEvents', {headers, params})
-    .subscribe((data: CalendarEventActionResponse[]) => {
-
-      data.forEach(childObj=> {
-        console.log("primary color: "+''+childObj.colorPrime);
-        console.log("secondary color: "+''+childObj.colorSeconder);
-
-        const colors: any = {
-          t: {
-            primary: childObj.colorPrime,
-            secondary: childObj.colorSeconder,
-          }};
-
-        var event: CalendarEvent = {id: childObj.id, title: childObj.title, color: colors.t, allDay: childObj.allDay, start: new Date(childObj.start), end: new Date(childObj.end)};
-
-        this.events.push(event);
-
-     });
-  });
-
-    console.log("Start constructor and load events....");
+          return {
+            id: event.id, 
+            title: event.title, 
+            color: {
+              primary: event.colorPrime,
+              secondary: event.colorSeconder
+            }, 
+            allDay: event.allDay, 
+            start: new Date(event.start), 
+            end: new Date(event.end)
+          };
+        });
+       this.cdr.markForCheck();
+       
+    });
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
