@@ -33,8 +33,8 @@ public class ResourceController {
 
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-//    @PutMapping("/saveEvent")
-    @RequestMapping(name = "/saveEvent", method = RequestMethod.PUT)
+    @RequestMapping("/saveEvent")
+//    @RequestMapping(name = "/saveEvent", method = RequestMethod.PUT)
     @ResponseBody
     public String saveEvent(@RequestParam String title, @RequestParam String start, @RequestParam String end,
                             @RequestParam String allDay, @RequestParam String colorPrimary, @RequestParam String colorSecondary,
@@ -47,8 +47,8 @@ public class ResourceController {
     }
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-//    @DeleteMapping("/deleteEvent")
-    @RequestMapping(name = "/deleteEvent", method = RequestMethod.DELETE)
+    @RequestMapping("/deleteEvent")
+//    @RequestMapping(name = "/deleteEvent", method = RequestMethod.DELETE)
     @ResponseBody
     public String deleteEvent(@RequestParam String id) {
         repository.deleteById(id);
@@ -58,7 +58,8 @@ public class ResourceController {
 
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    @RequestMapping(name = "/getAllEvents", method = RequestMethod.GET)
+//    @RequestMapping(name = "/getAllEvents", method = RequestMethod.GET)
+    @RequestMapping("/getAllEvents")
     @ResponseBody
     public List<Event> getAllEvents() {
         log.info("get all");

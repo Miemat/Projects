@@ -139,27 +139,27 @@ export class DemoComponent {
     .append('Access-Control-Allow-Headers', 'Content-Type')
     .append('Access-Control-Allow-Methods', 'GET')
     .append('Access-Control-Allow-Origin', '*');
-    
+
     this.http
     .get('http://localhost:8081/getAllEvents', {headers, params})
     .subscribe((data: CalendarEventActionResponse[]) => {
 
       data.forEach(childObj=> {
+        console.log("primary color: "+''+childObj.colorPrime);
+        console.log("secondary color: "+''+childObj.colorSeconder);
 
-        console.log("child start: "+ childObj.start);
-        console.log("child end: "+ childObj.end);
+        const colors: any = {
+          t: {
+            primary: childObj.colorPrime,
+            secondary: childObj.colorSeconder,
+          }};
 
-        var event: CalendarEvent = {id: childObj.id, title: childObj.title, color: colors.blue, allDay: childObj.allDay, start: new Date(childObj.start), end: new Date(childObj.end)};
+        var event: CalendarEvent = {id: childObj.id, title: childObj.title, color: colors.t, allDay: childObj.allDay, start: new Date(childObj.start), end: new Date(childObj.end)};
 
         this.events.push(event);
-      // this.addEventWithParams(childObj.title, childObj.start, childObj.end, "test");
-
-        // console.log("bbbbbbbbbbbbb: "+childObj.title);
 
      });
   });
-
-
 
     console.log("Start constructor and load events....");
   }
@@ -244,7 +244,7 @@ export class DemoComponent {
     const headers = new HttpHeaders()
       .append('Content-Type', 'application/json')
       .append('Access-Control-Allow-Headers', 'Content-Type')
-      .append('Access-Control-Allow-Methods', 'GET')
+      .append('Access-Control-Allow-Methods', 'DELETE')
       .append('Access-Control-Allow-Origin', '*');
       
     this.http
@@ -274,7 +274,7 @@ export class DemoComponent {
     const headers = new HttpHeaders()
       .append('Content-Type', 'application/json')
       .append('Access-Control-Allow-Headers', 'Content-Type')
-      .append('Access-Control-Allow-Methods', 'GET')
+      .append('Access-Control-Allow-Methods', 'PUT')
       .append('Access-Control-Allow-Origin', '*');
       
     this.http
