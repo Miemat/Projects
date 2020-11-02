@@ -4,6 +4,9 @@ import com.project.model.Event;
 import com.project.repository.EventRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +17,7 @@ public class ResourceController {
 
     @Autowired
     private EventRepository repository;
+    private MongoOperations mongoOperations;
 
     @RequestMapping("/test")
     @ResponseBody
@@ -33,13 +37,13 @@ public class ResourceController {
     @RequestMapping(name = "/saveEvent", method = RequestMethod.PUT)
     @ResponseBody
     public String saveEvent(@RequestParam String title, @RequestParam String start, @RequestParam String end,
-                         @RequestParam Boolean allDay, @RequestParam String colorPrimary, @RequestParam String colorSecondary,
-                         @RequestParam String id) {
+                            @RequestParam String allDay, @RequestParam String colorPrimary, @RequestParam String colorSecondary,
+                            @RequestParam String id) {
 
-        Event event = new Event(title, start, end, allDay, colorPrimary, colorSecondary);
+        Event event = new Event(title, start, end, Boolean.parseBoolean(allDay), colorPrimary, colorSecondary);
         Event a = repository.save(event);
-        log.info("Data Event: "+ event.toString());
-        return "Done tTest with Id: "+a.getId();
+        log.info("Data Event: " + event.toString());
+        return "Done tTest with Id: " + a.getId();
     }
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -48,7 +52,7 @@ public class ResourceController {
     @ResponseBody
     public String deleteEvent(@RequestParam String id) {
         repository.deleteById(id);
-        log.info("Delete Event Id: "+ id);
+        log.info("Delete Event Id: " + id);
         return "Done";
     }
 
@@ -60,16 +64,31 @@ public class ResourceController {
         log.info("get all");
         List<Event> events = repository.findAll();
         try {
+<<<<<<<<< Temporary merge branch 1
+            events.forEach(data -> {
+                log.info(data.toString());
+            });
+        } catch (Exception e) {
+=========
             for (Event event: events) {
                 log.info(event.toString());
-
             }
         }catch(Exception e){
+>>>>>>>>> Temporary merge branch 2
             log.error(e.getMessage(), e);
         }
-        log.info("test: "+ events.get(0).toString());
-        String b = events.get(0).toString();
         return events;
+    }
+
+    @CrossOrigin(origins = "*", allowCredentials = "*")
+    @RequestMapping(name = "/getAllEventsByDate", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Event> getAllEventsByDate(String startDate, String endDate){
+
+        Query query = new Query();
+        query.addCriteria(Criteria.where("start").gte(startDate).and("start").lt(endDate));
+
+        return mongoOperations.find(query, Event.class);
     }
 
 
