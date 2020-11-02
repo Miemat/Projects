@@ -4,8 +4,8 @@ import {
   ViewChild,
   TemplateRef,
 } from '@angular/core';
-import {HttpParams} from "@angular/common/http";
-import {HttpHeaders} from "@angular/common/http";
+import { HttpParams } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import {
@@ -29,7 +29,7 @@ import {
 } from 'angular-calendar';
 import { CalendarEventActionResponse } from './calendar-event-action-response';
 import { CalendarEventActionsComponent } from 'projects/angular-calendar/src/modules/common/calendar-event-actions.component';
-
+import { DatePipe } from '@angular/common';
 
 const colors: any = {
   red: {
@@ -129,38 +129,43 @@ export class DemoComponent {
 
   activeDayIsOpen: boolean = true;
 
-  constructor(private http: HttpClient, private modal: NgbModal) {
-
+  constructor(
+    private http: HttpClient,
+    private modal: NgbModal,
+    public datepipe: DatePipe
+  ) {
     const params = new HttpParams();
 
-  const headers = new HttpHeaders()
-    .append('Content-Type', 'application/json')
-    .append('Access-Control-Allow-Headers', 'Content-Type')
-    .append('Access-Control-Allow-Methods', 'GET')
-    .append('Access-Control-Allow-Origin', '*');
-    
+    const headers = new HttpHeaders()
+      .append('Content-Type', 'application/json')
+      .append('Access-Control-Allow-Headers', 'Content-Type')
+      .append('Access-Control-Allow-Methods', 'GET')
+      .append('Access-Control-Allow-Origin', '*');
+
     this.http
-    .get('http://localhost:8081/getAllEvents', {headers, params})
-    .subscribe((data: CalendarEventActionResponse[]) => {
+      .get('http://localhost:8081/getAllEvents', { headers, params })
+      .subscribe((data: CalendarEventActionResponse[]) => {
+        data.forEach((childObj) => {
+          console.log('child start: ' + childObj.start);
+          console.log('child end: ' + childObj.end);
 
-      data.forEach(childObj=> {
+          var event: CalendarEvent = {
+            id: childObj.id,
+            title: childObj.title,
+            color: colors.blue,
+            allDay: childObj.allDay,
+            start: new Date(childObj.start),
+            end: new Date(childObj.end),
+          };
 
-        console.log("child start: "+ childObj.start);
-        console.log("child end: "+ childObj.end);
+          this.events.push(event);
+          // this.addEventWithParams(childObj.title, childObj.start, childObj.end, "test");
 
-        var event: CalendarEvent = {id: childObj.id, title: childObj.title, color: colors.blue, allDay: childObj.allDay, start: startOfDay(new Date()), end: startOfDay(new Date())};
+          // console.log("bbbbbbbbbbbbb: "+childObj.title);
+        });
+      });
 
-        this.events.push(event);
-      // this.addEventWithParams(childObj.title, childObj.start, childObj.end, "test");
-
-        // console.log("bbbbbbbbbbbbb: "+childObj.title);
-
-     });
-  });
-
-
-
-    console.log("Start constructor and load events....");
+    console.log('Start constructor and load events....');
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
@@ -217,7 +222,12 @@ export class DemoComponent {
     ];
   }
 
-  addEventWithParams(_title: string, _start: string, _end:string, _color:string, ): void {
+  addEventWithParams(
+    _title: string,
+    _start: string,
+    _end: string,
+    _color: string
+  ): void {
     this.events = [
       ...this.events,
       {
@@ -236,43 +246,68 @@ export class DemoComponent {
 
   deleteEvent(eventToDelete: CalendarEvent) {
     this.events = this.events.filter((event) => event !== eventToDelete);
-    
-    const params = new HttpParams()
-    .set('id', ""+eventToDelete.id);
+
+    const params = new HttpParams().set('id', '' + eventToDelete.id);
 
     const headers = new HttpHeaders()
       .append('Content-Type', 'application/json')
       .append('Access-Control-Allow-Headers', 'Content-Type')
       .append('Access-Control-Allow-Methods', 'GET')
       .append('Access-Control-Allow-Origin', '*');
-      
-    this.http
-      .get('http://localhost:8081/allEvents', {headers, responseType: 'text', params}).subscribe(); 
 
+    this.http
+      .get('http://localhost:8081/allEvents', {
+        headers,
+        responseType: 'text',
+        params,
+      })
+      .subscribe();
   }
 
-  saveEvent(eventToSave: CalendarEvent){
+  saveEvent(eventToSave: CalendarEvent) {
+    console.log(
+      'date start: ' +
+        this.datepipe.transform(eventToSave.start, 'yyyy-MM-ddThh:mm:ss')
+    );
+    console.log(
+      'date end: ' +
+        this.datepipe.transform(eventToSave.end, 'yyyy-MM-ddThh:mm:ss')
+    );
 
     const params = new HttpParams()
       .set('title', eventToSave.title)
-      .set('start', ""+eventToSave.start)
-      .set('end', ""+eventToSave.end)
-      .set('allDay', ""+eventToSave.allDay)
+
+      .set(
+        'start',
+        '' + this.datepipe.transform(eventToSave.start, 'yyyy-MM-ddThh:mm:ss')
+      )
+      .set(
+        'end',
+        '' + this.datepipe.transform(eventToSave.end, 'yyyy-MM-ddThh:mm:ss')
+      )
+
+      // 1968-11-16T00:00:00
+
+      .set('allDay', '' + eventToSave.allDay)
       .set('colorPrimary', eventToSave.color.primary)
       .set('colorSecondary', eventToSave.color.secondary)
-      .set('id', ""+eventToSave.id);
+      .set('id', '' + eventToSave.id);
 
     const headers = new HttpHeaders()
       .append('Content-Type', 'application/json')
       .append('Access-Control-Allow-Headers', 'Content-Type')
       .append('Access-Control-Allow-Methods', 'GET')
       .append('Access-Control-Allow-Origin', '*');
-      
+
     this.http
-      .get('http://localhost:8081/saveEvent', {headers, responseType: 'text', params }).subscribe(res => console.log(res));
+      .get('http://localhost:8081/saveEvent', {
+        headers,
+        responseType: 'text',
+        params,
+      })
+      .subscribe((res) => console.log(res));
 
-      console.log("Saved Event on DB")
-
+    console.log('Saved Event on DB');
   }
 
   setView(view: CalendarView) {

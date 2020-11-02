@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { NgModule }       from '@angular/core';
 import { BrowserModule }  from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -10,7 +11,7 @@ import { AppComponent }   from './app.component';
     BrowserModule,
     BrowserAnimationsModule,
     CalendarModule.forRoot({
-      provide: DateAdapter,
+      provide: [DateAdapter, DatePipe],
       useFactory: adapterFactory
     })
   ],
