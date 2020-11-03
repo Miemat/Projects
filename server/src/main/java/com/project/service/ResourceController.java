@@ -5,8 +5,6 @@ import com.project.repository.EventRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -64,18 +62,15 @@ public class ResourceController {
         log.info("get all");
         List<Event> events = repository.findAll();
         try {
-<<<<<<<<< Temporary merge branch 1
+
             events.forEach(data -> {
                 log.info(data.toString());
             });
         } catch (Exception e) {
-=========
+
             for (Event event: events) {
                 log.info(event.toString());
             }
-        }catch(Exception e){
->>>>>>>>> Temporary merge branch 2
-            log.error(e.getMessage(), e);
         }
         return events;
     }
@@ -84,11 +79,7 @@ public class ResourceController {
     @RequestMapping(name = "/getAllEventsByDate", method = RequestMethod.GET)
     @ResponseBody
     public List<Event> getAllEventsByDate(String startDate, String endDate){
-
-        Query query = new Query();
-        query.addCriteria(Criteria.where("start").gte(startDate).and("start").lt(endDate));
-
-        return mongoOperations.find(query, Event.class);
+        return mongoOperations.find(EventRepository.getAllEventsByDate(startDate, endDate), Event.class);
     }
 
 
